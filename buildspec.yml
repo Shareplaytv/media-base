@@ -7,7 +7,7 @@ phases:
       - CODEBUILD_SRC_DIR=${CODEBUILD_SRC_DIR:=$(pwd)}
       - REV=${CODEBUILD_RESOLVED_SOURCE_VERSION}
       - ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-      - ECR_REPO=public.ecr.aws/j7u2k1c9/media-utils
+      - ECR_REPO=public.ecr.aws/j7u2k1c9/media-base
       - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
   build:
     commands:

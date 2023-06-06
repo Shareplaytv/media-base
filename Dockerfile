@@ -5,8 +5,7 @@ RUN yum update -y
 RUN yum makecache &&\
 yum -y install \
   wget tar xz gzip golang awscli cargo \
-  ldconfig pkg-config llvm clang openssl-devel \
-  pngquant bc \
+  ldconfig pkg-config llvm clang openssl-devel bc \
   glib2-devel \
   expat-devel \
   librsvg2-devel \
@@ -91,7 +90,7 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
   yum -y install yum-utils &&\
   yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm &&\
   yum-config-manager --enable remi --enable epel &&\
-  yum -y install vips vips-devel vips-tools
+  yum -y install vips vips-devel vips-tools pngquant
 
 RUN ffmpeg -buildconf
 
