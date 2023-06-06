@@ -6,6 +6,7 @@ RUN yum makecache &&\
 yum -y install \
   wget tar xz gzip golang awscli cargo \
   ldconfig pkg-config llvm clang openssl-devel \
+  pngquant bc \
   glib2-devel \
   expat-devel \
   librsvg2-devel \
@@ -101,5 +102,3 @@ make -j $(nproc) && make install
 RUN /sbin/ldconfig /usr/local/lib
 
 RUN yum clean all && rm -rf /var/cache/yum
-
-RUN yum install -y pngquant bc

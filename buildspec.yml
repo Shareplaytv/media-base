@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - CODEBUILD_WEBHOOK_TRIGGER=${CODEBUILD_WEBHOOK_TRIGGER:="non"}
+      - CODEBUILD_SRC_DIR=${CODEBUILD_SRC_DIR:=$(pwd)}
+      - GIT_REV=${CODEBUILD_RESOLVED_SOURCE_VERSION}
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+      - ECR_REPO=public.ecr.aws/j7u2k1c9/media-utils
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+  build:
+    commands:
+      - make push
