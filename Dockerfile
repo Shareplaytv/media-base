@@ -99,6 +99,9 @@ RUN cd $SRC_DIRs && cd opus-1.4 &&\
 ./configure && make clean &&\
 make -j $(nproc) && make install
 
+RUN yum install \
+  https://github.com/bbc/audiowaveform/releases/download/1.8.0/audiowaveform-1.8.0-1.amzn2.x86_64.rpm
+
 RUN /sbin/ldconfig /usr/local/lib
 
 RUN yum clean all && rm -rf /var/cache/yum

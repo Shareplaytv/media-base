@@ -13,11 +13,17 @@ Parameters:
     Type: String
 
 Resources:
+  BuildBucket:
+    Type: AWS::S3::Bucket
+
   Pipeline:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       Name: !Sub ${AWS::StackName}
       RoleArn: !GetAtt PipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref BuildBucket
       Stages:
         - Name: source
           Actions:
@@ -63,7 +69,9 @@ Resources:
         Image: "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
         ImagePullCredentialsType: CODEBUILD
         PrivilegedMode: true
-        EnvironmentVariables:
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
       QueuedTimeoutInMinutes: 5
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Source:
@@ -96,5 +104,49 @@ Resources:
               - Effect: Allow
                 Action:
                   - "ecr-public:*"
+                  - "logs:*"
+                  - "s3:*"
+                  -  sts:GetServiceBearerToken
                 Resource: "*"
       RoleName: !Sub ${AWS::StackName}-codebuild
+
+  PipelineRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${AWS::StackName}-CodePipelineAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "codebuild:*"
+                  - "codestar-connections:*"
+                  - "s3:*"
+                  - "iam:AttachRolePolicy"
+                  - "iam:CreatePolicy"
+                  - "iam:CreateRole"
+                  - "iam:DeleteRole"
+                  - "iam:DeleteRolePolicy"
+                  - "iam:DetachRolePolicy"
+                  - "iam:GetRole"
+                  - "iam:GetRolePolicy"
+                  - "iam:PassRole"
+                  - "iam:PutRolePolicy"
+                  - "logs:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - "codestar-connections:UseConnection"
+                Resource: !Ref CodeStarConnectionArn
+      RoleName: !Sub ${AWS::StackName}-pipelinerole
